@@ -1,6 +1,6 @@
 # Repository specification: aether-ai-evaluations
 
-**Status:** Documentation baseline copied from the Aether AI master specification. Implementation status must be verified separately.
+**Status:** Repository exists; documentation-only on the inspected `main` branch. No application implementation is present in the audited tree.
 
 ## Mission
 
@@ -8,7 +8,7 @@ Repeatable model/agent evaluation datasets, runners, scoring, regressions, and r
 
 ## Dependencies and connections
 
-Agents, gateway, testing, observability.
+aether-ai-agents, aether-ai-gateway, aether-ai-testing, and aether-ai-observability.
 
 ## Owned capabilities
 
