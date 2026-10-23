@@ -1,33 +1,23 @@
 # aether-ai-evaluations
 
-Aether AI repository for Repeatable model/agent evaluation datasets, runners, scoring, regressions, and release gates.
+**Status:** Initial deterministic evaluation harness implemented on a feature branch. No model-quality claims are implied.
 
-## Status
+## Implemented
 
-Documentation baseline established. This repository is not considered implemented or production-ready until code, tests, security review, and release checks are completed.
+- [Evaluation source](src/index.js): bounded dataset validation, unique case IDs, exact/contains/not-contains string assertions, and aggregate pass-rate/mean-score summaries.
+- [Unit tests](test/evaluations.test.js): schema validation, duplicate IDs, scoring, Unicode normalization, summary metrics, and malformed inputs.
+- Dependency-free Node.js package with Node 20/22 CI.
+
+## Limitations
+
+These are deterministic string checks, not semantic quality or safety evaluations. No model runner, evaluator model, golden dataset suite, regression baseline, benchmark report, judge calibration, or PII-safe result store is included. Dataset owners must review test coverage and avoid committing secrets or private user content.
 
 ## Documentation
 
-- [Repository specification](docs/REPOSITORY_SPECIFICATION.md) — mission, boundaries, dependencies, contracts, security, tests, and implementation gates.
-- [Aether AI platform architecture](https://github.com/Monupatel62/aether-ai-platform/blob/main/docs/MASTER_ARCHITECTURE.md)
-- [Master repository catalog](https://github.com/Monupatel62/aether-ai-platform/blob/main/docs/REPOSITORY_CATALOG.md)
-
-## Working rules
-
-- Keep this repository within its documented ownership boundary.
-- Do not commit secrets, credentials, production data, or unreviewed generated code.
-- Version public contracts and document breaking changes.
-- Use synthetic or sanitized data in tests.
-- Update the master catalog when ownership or cross-repository contracts change.
-
-## Repository documents
-
+- [Repository specification](docs/REPOSITORY_SPECIFICATION.md)
 - [Project specification](docs/PROJECT_SPEC.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Dependencies and contracts](docs/DEPENDENCIES_AND_CONTRACTS.md)
 - [Implementation plan](docs/IMPLEMENTATION_PLAN.md)
-- [Research and licenses](docs/RESEARCH_AND_LICENSES.md)
-- [Technical design](docs/TECHNICAL_DESIGN.md)
 - [Security review](docs/SECURITY_REVIEW.md)
-- [Engineering standard](docs/ENGINEERING_STANDARD.md)
-- [Work log](docs/WORKLOG.md)
+- [Master catalog](https://github.com/Monupatel62/aether-ai-platform/blob/main/docs/REPOSITORY_CATALOG.md)
