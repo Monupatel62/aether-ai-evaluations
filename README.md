@@ -1,33 +1,38 @@
-# aether-ai-evaluations
+# @aether-ai/evaluations
 
-Aether AI repository for Repeatable model/agent evaluation datasets, runners, scoring, regressions, and release gates.
+Deterministic dataset validation and exact-match scoring for Aether AI evaluation workflows.
 
 ## Status
 
-Documentation baseline established. This repository is not considered implemented or production-ready until code, tests, security review, and release checks are completed.
+Initial deterministic evaluator in review. Runner language/hosting, artifact storage, model-judge approach, score aggregation, thresholds, and release-baseline policy remain open decisions. This package does not call models or execute tools.
 
-## Documentation
+## Current implementation
 
-- [Repository specification](docs/REPOSITORY_SPECIFICATION.md) — mission, boundaries, dependencies, contracts, security, tests, and implementation gates.
-- [Aether AI platform architecture](https://github.com/Monupatel62/aether-ai-platform/blob/main/docs/MASTER_ARCHITECTURE.md)
-- [Master repository catalog](https://github.com/Monupatel62/aether-ai-platform/blob/main/docs/REPOSITORY_CATALOG.md)
+- Versioned synthetic dataset and case types.
+- Dataset validation for IDs, duplicate cases, case count, and per-case payload size.
+- Deterministic exact JSON comparison independent of object key order.
+- Explicit `passed`, `failed`, and `incomplete` case outcomes; missing, timed-out, cancelled, errored, or unrun cases never count as passes.
+- Compact reports contain case IDs/status/reasons, not raw prompts or model outputs.
 
-## Working rules
+## Example
 
-- Keep this repository within its documented ownership boundary.
-- Do not commit secrets, credentials, production data, or unreviewed generated code.
-- Version public contracts and document breaking changes.
-- Use synthetic or sanitized data in tests.
-- Update the master catalog when ownership or cross-repository contracts change.
+```ts
+import { evaluateDataset } from "@aether-ai/evaluations";
 
-## Repository documents
+const report = evaluateDataset(dataset, new Map([
+  ["case-1", { status: "completed", actual: { answer: "synthetic" } }]
+]));
+```
 
-- [Project specification](docs/PROJECT_SPEC.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Dependencies and contracts](docs/DEPENDENCIES_AND_CONTRACTS.md)
-- [Implementation plan](docs/IMPLEMENTATION_PLAN.md)
-- [Research and licenses](docs/RESEARCH_AND_LICENSES.md)
-- [Technical design](docs/TECHNICAL_DESIGN.md)
-- [Security review](docs/SECURITY_REVIEW.md)
-- [Engineering standard](docs/ENGINEERING_STANDARD.md)
-- [Work log](docs/WORKLOG.md)
+Use only synthetic or reviewed sanitized datasets. Do not store raw production traces by default. Exact-match scoring is appropriate only for deterministic fixtures; it is not a general quality measure for probabilistic model outputs.
+
+## Development
+
+```bash
+npm install
+npm run typecheck
+npm test
+npm run build
+```
+
+CI is configured for Node.js 20 and 22. Model/agent evaluation, safety scoring, regression thresholds, artifact storage, and release gates are not implemented yet.
