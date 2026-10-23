@@ -6,7 +6,14 @@ function isRecord(value) { return value !== null && typeof value === "object" &&
 function validId(value) { return typeof value === "string" && ID.test(value) && value.trim() === value; }
 function normalize(value) { return value.normalize("NFKC").toLocaleLowerCase("en-US"); }
 
-export function validateDataset(dataset, { maxCases = 1000, maxTextChars = 100_000 } = {}) {
+export function validateDataset(dataset, { maxCases = 1000, maxTextChars = 100_000, maxAssertionsPerCase = 100, maxDatasetBytes = 5_242_880 } = {}) {
+  if (!Number.isSafeInteger(maxCases) || maxCases < 1 || maxCases > 10_000) throw new TypeError("maxCases is invalid");
+  if (!Number.isSafeInteger(maxTextChars) || maxTextChars < 1 || maxTextChars > 1_000_000) throw new TypeError("maxTextChars is invalid");
+  if (!Number.isSafeInteger(maxAssertionsPerCase) || maxAssertionsPerCase < 1 || maxAssertionsPerCase > 1000) throw new TypeError("maxAssertionsPerCase is invalid");
+  if (!Number.isSafeInteger(maxDatasetBytes) || maxDatasetBytes < 1 || maxDatasetBytes > 20_971_520) throw new TypeError("maxDatasetBytes is invalid");
+  let encoded;
+  try { encoded = JSON.stringify(dataset); } catch { throw new EvaluationError("invalid_dataset", "Dataset must be JSON-serializable"); }
+  if (typeof encoded !== "string" || Buffer.byteLength(encoded) > maxDatasetBytes) throw new EvaluationError("dataset_too_large", "Dataset exceeds the configured size limit");
   if (!isRecord(dataset) || dataset.schemaVersion !== 1 || !Array.isArray(dataset.cases) || dataset.cases.length === 0 || dataset.cases.length > maxCases) {
     throw new EvaluationError("invalid_dataset", "Dataset must be version 1 and contain a bounded non-empty cases array");
   }
@@ -17,9 +24,9 @@ export function validateDataset(dataset, { maxCases = 1000, maxTextChars = 100_0
     if (typeof item.input !== "string" || item.input.length > maxTextChars) throw new EvaluationError("invalid_input", `Case ${item.id} input is invalid`);
     if (!isRecord(item.assertions)) throw new EvaluationError("invalid_assertions", `Case ${item.id} assertions are invalid`);
     const a = item.assertions;
-    if (a.exact !== undefined && typeof a.exact !== "string") throw new EvaluationError("invalid_assertions", "exact must be a string");
+    if (a.exact !== undefined && (typeof a.exact !== "string" || a.exact.length > maxTextChars)) throw new EvaluationError("invalid_assertions", "exact must be a bounded string");
     for (const field of ["contains", "notContains"]) {
-      if (a[field] !== undefined && (!Array.isArray(a[field]) || a[field].some((v) => typeof v !== "string" || !v.length || v.length > 1000))) {
+      if (a[field] !== undefined && (!Array.isArray(a[field]) || a[field].length > maxAssertionsPerCase || a[field].some((v) => typeof v !== "string" || !v.length || v.length > 1000))) {
         throw new EvaluationError("invalid_assertions", `${field} must be an array of bounded non-empty strings`);
       }
     }
