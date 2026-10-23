@@ -42,3 +42,11 @@ test("rejects malformed responses and summaries", () => {
   assert.throws(() => evaluateResponse({ id: "x", assertions: {} }, null), EvaluationError);
   assert.throws(() => summarizeEvaluations([{ score: 2, passed: false }]), EvaluationError);
 });
+
+
+test("bounds assertion count, dataset bytes, and limit configuration", () => {
+  assert.throws(() => validateDataset({ schemaVersion: 1, cases: [{ id: "a", input: "x", assertions: { exact: "x".repeat(100_001) } }] }), EvaluationError);
+  assert.throws(() => validateDataset({ schemaVersion: 1, cases: [{ id: "a", input: "x", assertions: { contains: Array.from({ length: 101 }, () => "x") } }] }), EvaluationError);
+  assert.throws(() => validateDataset(dataset, { maxCases: 0 }), /maxCases/);
+  assert.throws(() => validateDataset(dataset, { maxDatasetBytes: 10 }), EvaluationError);
+});
