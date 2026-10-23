@@ -1,0 +1,10 @@
+{
+  "name": "@aether-ai/evaluations",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bounded evaluation runner and deterministic scoring functions.",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "exports": { ".": "./src/index.js" },
+  "scripts": { "test": "node --test", "check": "node --check src/index.js && node --check test/evaluations.test.js" }
+}
